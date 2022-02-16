@@ -104,9 +104,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c5f9703efac12e4088b4196937692d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: Grass
+  tileTypeVerbose: 
   spr: {fileID: 7655924458531632385}
   highlight: {fileID: 8546997078041908302}
+  tileType: 1
   ruleTile: {fileID: 11400000, guid: 2bce9eb61e2facf469da6ea8e9a52f06, type: 2}
 --- !u!1 &8546997078041908302 stripped
 GameObject:

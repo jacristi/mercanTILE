@@ -104,9 +104,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 813b26de7d347284f81f94287964ed2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: Water
+  tileTypeVerbose: 
   spr: {fileID: 6026047618979853806}
   highlight: {fileID: 5693275969026790561}
+  tileType: 4
   ruleTile: {fileID: 11400000, guid: 94ee802275f964347adb7e9f3059aee1, type: 2}
 --- !u!212 &6026047618979853806 stripped
 SpriteRenderer:

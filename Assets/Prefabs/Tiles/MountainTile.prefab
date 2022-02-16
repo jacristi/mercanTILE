@@ -99,9 +99,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac859a10d9109bd4490b30a632118f97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: Mountain
+  tileTypeVerbose: 
   spr: {fileID: 37358795830586405}
   highlight: {fileID: 2028589701690690922}
+  tileType: 3
   ruleTile: {fileID: 11400000, guid: 7c831688dcae308499c05a720867604a, type: 2}
 --- !u!212 &37358795830586405 stripped
 SpriteRenderer:

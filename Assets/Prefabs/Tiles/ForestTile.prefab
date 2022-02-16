@@ -99,9 +99,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50db54bed2b97f4ba64924f5f7f5ec7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: Forest
+  tileTypeVerbose: 
   spr: {fileID: 7949168944518012840}
   highlight: {fileID: 8283062255297101543}
+  tileType: 2
   ruleTile: {fileID: 11400000, guid: 9e600da4917cbf04689ca82edc314f0c, type: 2}
 --- !u!212 &7949168944518012840 stripped
 SpriteRenderer:

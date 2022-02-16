@@ -104,9 +104,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d80de1fff70a5441954bdc192468cac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: Road
+  tileTypeVerbose: 
   spr: {fileID: 6026047618979853806}
   highlight: {fileID: 5693275969026790561}
+  tileType: 5
   ruleTile: {fileID: 11400000, guid: bf4ac23bb25c47041b7f7e1c2420cd88, type: 2}
 --- !u!212 &6026047618979853806 stripped
 SpriteRenderer:
