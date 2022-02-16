@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using TMPro;
+
 
 public class GridManager : MonoBehaviour
 {
@@ -17,6 +19,8 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int width, height;
     [SerializeField] private float tileSize;
     [SerializeField] private int smoothingMinThreshold;
+    private Tile[,] tileArray;
+    private Tile selectedTile;
 
     [Header("Forest Gen")]
     [Range(0, 100)]
@@ -32,9 +36,8 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] Transform cam;
 
-    private Dictionary<Vector2, Tile> tilesDict;
-
-    private Tile[,] tileArray;
+    [Header("UI")]
+    [SerializeField] private TextMeshProUGUI selectedItemText;
 
     private void Start()
     {
@@ -45,6 +48,27 @@ public class GridManager : MonoBehaviour
     private void Update() {
         if (Input.GetKeyDown("space"))
             ReloadGrid();
+        if (Input.GetMouseButtonDown(0))
+            {
+                if (selectedTile != null)
+                    selectedTile.Deselect();
+
+                selectedTile = GetTileAtPosition(MouseExtensions.GetMouseWorldPosition());
+
+                if (selectedTile != null)
+                    selectedTile.Select();
+                    selectedItemText.text = $"{selectedTile.GetTileTypeVerbose()} - {selectedTile.gridPos}";
+            }
+    }
+
+    private Tile GetTileAtPosition(Vector3 mousePos) {
+        int x = (int)Mathf.Floor(mousePos.x);
+        int y = (int)Mathf.Floor(mousePos.y);
+
+        if ((x >= 0 && x <= width) && y >= 0 && y <= height)
+            return tileArray[x,y];
+
+        return null;
     }
 
     public void ReloadGrid()
@@ -115,7 +139,7 @@ public class GridManager : MonoBehaviour
     }
 
     private void GenerateTerrain(System.Random pseudoRandom, Tile tileToPlace, float fillPercent, bool applySmoothing, bool noStandAloneTiles=false)
-    {   Debug.Log("Generating " + tileToPlace + " " + noStandAloneTiles.ToString());
+    {
         // Populate grid with mountain tiles
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -156,20 +180,12 @@ public class GridManager : MonoBehaviour
                 var tileObj = Instantiate(thisTile, new Vector3(x+.5f, y+.5f), Quaternion.identity);
                 tileObj.transform.parent = this.transform;
                 tileObj.name = $"{tileObj.GetTileTypeVerbose()} {x},{y}";
+                tileObj.gridPos = (x, y);
                 tileArray[x,y] = tileObj;
                 groundTileMap.SetTile(new Vector3Int(x, y, 0), thisTile.ruleTile);
             }
         }
 
         cam.transform.position = new Vector3((float)width * 0.5f, (float)height * 0.5f, -10);
-    }
-
-    private Tile GetTileAtPosition(Vector2 pos)
-    {
-        if (tilesDict.TryGetValue(pos, out var tile)) {
-            return tile;
-        } else {
-            return null;
-        }
     }
 }

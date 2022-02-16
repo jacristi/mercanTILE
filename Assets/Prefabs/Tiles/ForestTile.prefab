@@ -79,9 +79,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: ForestTile
       objectReference: {fileID: 0}
+    - target: {fileID: 5616522273205136051, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 493311629806672240, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
+--- !u!1 &2976184423846253209 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7593931434247027233, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
+  m_PrefabInstance: {fileID: 4624800515234949304}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7949168944518012822 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3350546840210601774, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
@@ -102,8 +111,10 @@ MonoBehaviour:
   tileTypeVerbose: 
   spr: {fileID: 7949168944518012840}
   highlight: {fileID: 8283062255297101543}
+  selection: {fileID: 2976184423846253209}
   tileType: 2
   ruleTile: {fileID: 11400000, guid: 9e600da4917cbf04689ca82edc314f0c, type: 2}
+  gridPos: {x: 0, y: 0}
 --- !u!212 &7949168944518012840 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 3350546840210601744, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}

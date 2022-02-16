@@ -10,12 +10,14 @@ public class Tile : MonoBehaviour
     [SerializeField] private SpriteRenderer spr;
 
     [SerializeField] private GameObject highlight;
-    // [SerializeField] private GameObject selection;
+    [SerializeField] private GameObject selection;
 
     public enum TileType {Void, Grassland, Forest, Mountain, Water, Road}
     public TileType tileType = TileType.Void;
 
     public TileBase ruleTile;
+
+    public (int, int) gridPos;
 
     private void Start() {
         tileTypeVerbose = GetTileTypeVerbose();
@@ -56,5 +58,12 @@ public class Tile : MonoBehaviour
 
     private void OnMouseExit() {
         highlight.SetActive(false);
+    }
+
+    public void Select() {
+        selection.SetActive(true);
+    }
+    public void Deselect() {
+        selection.SetActive(false);
     }
 }

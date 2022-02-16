@@ -82,6 +82,11 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 493311629806672240, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
+--- !u!1 &1494151223209228511 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7593931434247027233, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
+  m_PrefabInstance: {fileID: 9070068198814941950}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5693275969026790561 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3665312913787360863, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
@@ -107,6 +112,7 @@ MonoBehaviour:
   tileTypeVerbose: 
   spr: {fileID: 6026047618979853806}
   highlight: {fileID: 5693275969026790561}
+  selection: {fileID: 1494151223209228511}
   tileType: 4
   ruleTile: {fileID: 11400000, guid: 94ee802275f964347adb7e9f3059aee1, type: 2}
 --- !u!212 &6026047618979853806 stripped
