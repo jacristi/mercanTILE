@@ -13,6 +13,7 @@ public class GridManager : MonoBehaviour
 
     [Header("Grid Details")]
     [SerializeField] private float seed;
+    [SerializeField] private bool useDynamicSeed;
     [SerializeField] private int width, height;
     [SerializeField] private float tileSize;
     [SerializeField] private int smoothingMinThreshold;
@@ -21,7 +22,13 @@ public class GridManager : MonoBehaviour
     [Range(0, 100)]
     [SerializeField] private int forestFillPercent;
     [SerializeField] private bool useForestSmoothing;
+    [SerializeField] private bool generateForest;
 
+    [Header("Mountain Gen")]
+    [Range(0, 100)]
+    [SerializeField] private int mountainFillPercent;
+    [SerializeField] private bool useMountainSmoothing;
+    [SerializeField] private bool generateMountain;
 
     [SerializeField] Transform cam;
 
@@ -32,8 +39,6 @@ public class GridManager : MonoBehaviour
     private void Start()
     {
         GenerateGrid();
-        if (useForestSmoothing)
-            SmoothTiles(tilePrefabs[(int)Tile.TileType.Forest]);
         RenderMap();
     }
 
@@ -49,8 +54,6 @@ public class GridManager : MonoBehaviour
             Destroy(child.gameObject);
         }
         GenerateGrid();
-        if (useForestSmoothing)
-            SmoothTiles(tilePrefabs[(int)Tile.TileType.Forest]);
         RenderMap();
     }
 
@@ -64,9 +67,9 @@ public class GridManager : MonoBehaviour
         for (int nX = gridX-1; nX <= gridX + 1; nX++) {
             for (int nY = gridY-1; nY <= gridY + 1; nY++) {
                 bool isInBounds = (nX >= 0 && nX<width && nY >= 0 && nY < height);
-                bool isNotThisTile = (nX != gridX && nY != gridY);
-                bool isTileToCheck = (tileArray[nX,nY] == tileToCheck);
-                if (isInBounds && isNotThisTile && isTileToCheck) {
+                // bool isNotThisTile = (nX != gridX && nY != gridY);
+
+                if (isInBounds) { //} && isNotThisTile) {
                     if (tileArray[nX,nY] == tileToCheck)
                         tileCount++;
                 }
@@ -75,7 +78,7 @@ public class GridManager : MonoBehaviour
         return tileCount;
     }
 
-    private void SmoothTiles(Tile tileToSet)
+    private void SmoothTiles(Tile tileToSet, bool noStandAloneTiles)
     {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -85,6 +88,8 @@ public class GridManager : MonoBehaviour
 
                     if (surroundingTileCount >= smoothingMinThreshold) {
                         tileArray[x,y] = tileToSet;
+                    } else if (tileArray[x,y] == tileToSet && surroundingTileCount == 1 && noStandAloneTiles == true) {
+                        tileArray[x,y] = tilePrefabs[(int)Tile.TileType.Grassland];
                     }
                 }
             }
@@ -93,27 +98,42 @@ public class GridManager : MonoBehaviour
 
     private void GenerateGrid()
     {
-        // seed = Time.time;
+        if (useDynamicSeed)
+            seed = Time.time;
+
         System.Random pseudoRandom = new System.Random(seed.GetHashCode());
         tileArray = new Tile[width, height];
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                Tile tileToSpawn = blankTile;
-                if (!(x == 0 || x == width-1 || y <= 1 || y >= height-2)) {
-                    // tileToSpawn = tilePrefabs[(int)Tile.TileType.Grassland];
-                    tileToSpawn = (pseudoRandom.Next(0, 100) < forestFillPercent) ? tilePrefabs[(int)Tile.TileType.Forest] : tilePrefabs[(int)Tile.TileType.Grassland];
-                }
-                tileArray[x,y] = tileToSpawn;
-            }
-        }
+        // Generate Grassland base map
+        GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Grassland], 100, false);
+
+        if (generateForest)
+            GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Forest], forestFillPercent, useForestSmoothing, false);
+
+        if (generateMountain)
+            GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Mountain], mountainFillPercent, useMountainSmoothing, true);
     }
 
-    private void GenerateForest() {}
+    private void GenerateTerrain(System.Random pseudoRandom, Tile tileToPlace, float fillPercent, bool applySmoothing, bool noStandAloneTiles=false)
+    {   Debug.Log("Generating " + tileToPlace + " " + noStandAloneTiles.ToString());
+        // Populate grid with mountain tiles
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
 
-    private void GenerateMountains() {}
+                // if (!(x == 0 || x == width-1 || y <= 1 || y >= height-2)) {}
+                tileArray[x,y] = (pseudoRandom.Next(0, 100) < fillPercent) ? tileToPlace : tileArray[x,y];
 
-    private void GenerateWater() {}
+            }
+        }
+
+        // Apply smoothing if desired
+        if (applySmoothing)
+            SmoothTiles(tileToPlace, noStandAloneTiles);
+    }
+
+    private void GenerateWater() {
+        // Single "path" river from top to bottom?
+    }
 
     private void GenerateRoads() {
         // Take in a grid /2d array and populate road tile locations
@@ -136,6 +156,7 @@ public class GridManager : MonoBehaviour
                 var tileObj = Instantiate(thisTile, new Vector3(x+.5f, y+.5f), Quaternion.identity);
                 tileObj.transform.parent = this.transform;
                 tileObj.name = $"{tileObj.GetTileTypeVerbose()} {x},{y}";
+                tileArray[x,y] = tileObj;
                 groundTileMap.SetTile(new Vector3Int(x, y, 0), thisTile.ruleTile);
             }
         }
