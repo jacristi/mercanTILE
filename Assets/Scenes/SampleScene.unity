@@ -625,7 +625,6 @@ MonoBehaviour:
   useDynamicSeed: 0
   width: 35
   height: 20
-  tileSize: 0
   smoothingMinThreshold: 4
   forestFillPercent: 25
   useForestSmoothing: 1
@@ -637,6 +636,7 @@ MonoBehaviour:
   riverStartX: 7
   maxRiverPathChange: 2
   generateRiver: 1
+  generateRoad: 1
   cam: {fileID: 519420032}
   selectedItemText: {fileID: 805437981}
 --- !u!4 &838889526
