@@ -633,6 +633,10 @@ MonoBehaviour:
   mountainFillPercent: 15
   useMountainSmoothing: 1
   generateMountain: 1
+  riverCurvyness: 75
+  riverStartX: 7
+  maxRiverPathChange: 2
+  generateRiver: 1
   cam: {fileID: 519420032}
   selectedItemText: {fileID: 805437981}
 --- !u!4 &838889526

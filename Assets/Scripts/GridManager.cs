@@ -34,6 +34,13 @@ public class GridManager : MonoBehaviour
     [SerializeField] private bool useMountainSmoothing;
     [SerializeField] private bool generateMountain;
 
+    [Header("River Gen")]
+    [Range(0, 100)]
+    [SerializeField] private int riverCurvyness;
+    [SerializeField] private int riverStartX;
+    [SerializeField] private int maxRiverPathChange;
+    [SerializeField] private bool generateRiver;
+
     [SerializeField] Transform cam;
 
     [Header("UI")]
@@ -56,8 +63,10 @@ public class GridManager : MonoBehaviour
                 selectedTile = GetTileAtPosition(MouseExtensions.GetMouseWorldPosition());
 
                 if (selectedTile != null)
+                {
                     selectedTile.Select();
                     selectedItemText.text = $"{selectedTile.GetTileTypeVerbose()} - {selectedTile.gridPos}";
+                }
             }
     }
 
@@ -65,7 +74,7 @@ public class GridManager : MonoBehaviour
         int x = (int)Mathf.Floor(mousePos.x);
         int y = (int)Mathf.Floor(mousePos.y);
 
-        if ((x >= 0 && x <= width) && y >= 0 && y <= height)
+        if ((x >= 0 && x < width) && y >= 0 && y < height)
             return tileArray[x,y];
 
         return null;
@@ -136,6 +145,9 @@ public class GridManager : MonoBehaviour
 
         if (generateMountain)
             GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Mountain], mountainFillPercent, useMountainSmoothing, true);
+
+        if (generateRiver)
+            GenerateRiver(pseudoRandom, tilePrefabs[(int)Tile.TileType.Water]);
     }
 
     private void GenerateTerrain(System.Random pseudoRandom, Tile tileToPlace, float fillPercent, bool applySmoothing, bool noStandAloneTiles=false)
@@ -155,9 +167,32 @@ public class GridManager : MonoBehaviour
             SmoothTiles(tileToPlace, noStandAloneTiles);
     }
 
-    private void GenerateWater() {
-        // Single "path" river from top to bottom?
+    private void GenerateRiver(System.Random pseudoRandom, Tile waterTile)
+    {
+        int x = Mathf.Clamp(riverStartX, 0, width-1);
+        tileArray[x, 0] = waterTile;
+
+        for (int y = 1; y < height-1; y++) {
+
+            for (int i = 0; i < maxRiverPathChange; i++) {
+                int nX;
+                if (pseudoRandom.Next(0, 100) < 50)
+                    nX = Mathf.Clamp(x+i, 0, width-1);
+                else
+                    nX = Mathf.Clamp(x-i, 0, width-1);
+
+                tileArray[nX, y] = waterTile;
+
+                if (pseudoRandom.Next(0, 100) > riverCurvyness)
+                    break;
+                else
+                    x = nX;
+
+                }
+            }
+        tileArray[x, height-1] = waterTile;
     }
+
 
     private void GenerateRoads() {
         // Take in a grid /2d array and populate road tile locations
