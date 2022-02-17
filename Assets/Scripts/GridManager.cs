@@ -42,6 +42,9 @@ public class GridManager : MonoBehaviour
 
     [Header("Road Gen")]
     [SerializeField] private bool generateRoad;
+    [SerializeField] private int roadHeight;
+    [SerializeField] private int roadDeviation;
+    [SerializeField] private int maxRoadLegLength;
 
     [SerializeField] Transform cam;
 
@@ -162,9 +165,7 @@ public class GridManager : MonoBehaviour
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
 
-                // if (!(x == 0 || x == width-1 || y <= 1 || y >= height-2)) {}
                 tileGrid[x,y] = (pseudoRandom.Next(0, 100) < fillPercent) ? tileToPlace : tileGrid[x,y];
-
             }
         }
 
@@ -209,61 +210,106 @@ public class GridManager : MonoBehaviour
 
         int leftX = centerX - radius + Random.Range(-2, 2);
         int rightX = centerX + radius + Random.Range(-2, 2);
-        int topY = centerY + radius + Random.Range(-2, 2);
-        int bottomY = centerY - radius + Random.Range(-2, 2);
 
-        int maxRoadLegLength = 50;//(int)Mathf.Floor(width * 0.75f);
+        int maxRoadHeight = Mathf.Clamp(roadHeight, 0, height - (centerY + roadDeviation + 2));
+        //centerY + deviation + maxRoadHeight cannot be larger than height
+        // if (centerY + roadDeviation + maxRoadHeight + 2 > height)
+        //     maxRoadHeight = height - (centerY + roadDeviation + 2)
 
+        GenerateRoadTopLeg(pseudoRandom, roadTile, leftX, rightX, centerY, maxRoadHeight);
+        GenerateRoadBottomLeg(pseudoRandom, roadTile, leftX, rightX, centerY, maxRoadHeight);
 
-        // Top Leg - Left to Right Path
+        // Generate simple left/right connection legs
+        for (int y = centerY-maxRoadHeight; y <= centerY+maxRoadHeight;y++) {
+            y = Mathf.Clamp(y, 0, height-1);
+            tileGrid[leftX, y] = roadTile;
+            tileGrid[rightX, y] = roadTile;
+        }
+    }
+
+    void GenerateRoadTopLeg(System.Random pseudoRandom, Tile roadTile, int leftX, int rightX, int centerY, int maxRoadHeight)
+    {
         int targetX = rightX;
-        int targetY = centerY;
+        int targetY = centerY+maxRoadHeight;
 
-        int x = leftX;
-        int y = targetY;
+        int x = Mathf.Clamp(leftX, 0, width-1);
+        int y = Mathf.Clamp(targetY, 0, height-1);
+
         tileGrid[x, y] = roadTile;
-        Debug.Log($"Start at {x}, {y}");
-        Debug.Log($"max h: {targetY + radius}");
-        for (int i=0; i < maxRoadLegLength; i++) {
+
+        for (int i=0; i < maxRoadLegLength; i++)
+        {
             var pickChance = pseudoRandom.Next(0, 100);
-            bool canGoUp = (y < targetY + 4) && (tileGrid[x-1, y+1] != roadTile && tileGrid[x+1, y+1] != roadTile && tileGrid[x, y+1] != roadTile && x+1 != targetX) && !(x+2 == targetX && y-2 == targetY);
+            bool canGoUp = (y < targetY + roadDeviation) && (tileGrid[x-1, y+1] != roadTile && tileGrid[x+1, y+1] != roadTile && tileGrid[x, y+1] != roadTile && x+1 != targetX) && !(x+2 == targetX && y-2 == targetY) && !(x == targetX && y > targetY );
             bool canGoDown = (y > targetY) && (tileGrid[x-1, y-1] != roadTile && tileGrid[x+1, y-1] != roadTile && tileGrid[x, y-1] != roadTile && x+1 != targetX) && !(x+2 == targetX && y+2 == targetY);
             bool canGoRight = (x < targetX);
+
             if (canGoRight && pickChance > 66) {
                 x++;
-                Debug.Log($"R to {x}, {y}");
             } else if ((canGoDown && canGoUp) && pickChance > 66) {
                 y++;
-                Debug.Log($"U to {x}, {y}");
             } else if (canGoDown) {
                 y--;
-                Debug.Log($"D to {x}, {y}");
-            // } else if (canGoDown && canGoUp) {
-            //     y--;
-            //     Debug.Log($"D to {x}, {y}");
             } else if (canGoUp) {
-                Debug.Log(y < targetY + radius);
                 y++;
-                Debug.Log($"U(2) to {x}, {y}");
-
             } else if (canGoRight) {
                 x++;
-                Debug.Log($"R(2) to {x}, {y}");
             }
+
+            x = Mathf.Clamp(x, 0, width-1);
+            y = Mathf.Clamp(y, 0, height-1);
+
             tileGrid[x, y] = roadTile;
 
             if (x == targetX && y == targetY) {
-                Debug.Log("Made it");
+                break;
+            }
+        }
+    }
+
+    void GenerateRoadBottomLeg(System.Random pseudoRandom, Tile roadTile, int leftX, int rightX, int centerY, int maxRoadHeight)
+    {
+        int targetX = leftX;
+        int targetY = centerY-maxRoadHeight;
+
+        int x = Mathf.Clamp(rightX, 0, width-1);
+        int y = Mathf.Clamp(targetY, 0, height-1);
+
+        tileGrid[x, y] = roadTile;
+
+        for (int i=0; i < maxRoadLegLength; i++) {
+            var pickChance = pseudoRandom.Next(0, 100);
+
+            bool canGoUp = (y < targetY) && (tileGrid[x-1, y+1] != roadTile && tileGrid[x+1, y+1] != roadTile && tileGrid[x, y+1] != roadTile) && (x+1 != targetX) && !(x-2 == targetX && y-2 == targetY);
+            bool canGoDown = (y > targetY-roadDeviation) && (tileGrid[x-1, y-1] != roadTile && tileGrid[x+1, y-1] != roadTile && tileGrid[x, y-1] != roadTile) && (x-1 != targetX) && !(x-2 == targetX && y+2 == targetY) && !(x==targetX && y < targetY);
+            bool canGoLeft = (x > targetX);
+
+            if (canGoLeft && pickChance > 66) {
+                x--;
+            } else if ((canGoDown && canGoUp) && pickChance > 66) {
+                y--;
+            } else if (canGoUp) {
+                y++;
+            } else if (canGoDown) {
+                y--;
+            } else if (canGoLeft) {
+                x--;
+            }
+
+            x = Mathf.Clamp(x, 0, width-1);
+            y = Mathf.Clamp(y, 0, height-1);
+
+            tileGrid[x, y] = roadTile;
+
+            if (x == targetX && y == targetY) {
                 break;
             }
         }
     }
 
 
-    private void GenerateRoadsCircle(System.Random pseudoRandom, Tile roadTile) {
-
-        Tile[,] roadGrid = new Tile[width, height];
-
+    private void GenerateRoadsCircle(System.Random pseudoRandom, Tile roadTile)
+    {
         int diameter = (int)Mathf.Floor(height * 0.65f);
         int radius = diameter /2;
         int centerX = width/2;
@@ -275,19 +321,17 @@ public class GridManager : MonoBehaviour
             {
                 bool isOutlineOuter = ((x - centerX)*(x - centerX) + (y - centerY)*(y - centerY) > radius*radius-radius-radius/2);
                 bool isOutlineInner = ((x - centerX)*(x - centerX) + (y - centerY)*(y - centerY) < radius*radius+radius+radius/2);
+
                 if (isOutlineOuter && isOutlineInner)
                 {
-                    var xDist = centerX + Mathf.Abs(centerX-x);
-                    var yDist = centerY + Mathf.Abs(centerY-y);
+                    // Get values reflected on the x/y axis
+                    var xRef = centerX + Mathf.Abs(centerX-x);
+                    var yRef = centerY + Mathf.Abs(centerY-y);
 
                     tileGrid[x,y] = roadTile;
-                    tileGrid[xDist,y] = roadTile;
-                    tileGrid[x,yDist] = roadTile;
-                    tileGrid[xDist,yDist] = roadTile;
-
-
-
-                    // (x, y), (x, ySym), (xSym , y), (xSym, ySym) are in the circle
+                    tileGrid[xRef,y] = roadTile;
+                    tileGrid[x,yRef] = roadTile;
+                    tileGrid[xRef,yRef] = roadTile;
                 }
             }
         }
