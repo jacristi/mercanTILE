@@ -19,33 +19,39 @@ public class GridManager : MonoBehaviour
     [SerializeField] private float seed;
     [SerializeField] private bool useDynamicSeed;
     [SerializeField] private int width, height;
-    [SerializeField] private int smoothingMinThreshold;
+    [SerializeField] private bool generateForest;
+    [SerializeField] private bool generateMountain;
+    [SerializeField] private bool generateRiver;
+    [SerializeField] private bool generateRoad;
+    [SerializeField] private bool checkOnlyImmediateNeighbors;
+
     private Tile[,] tileGrid;
     private Tile selectedTile;
 
     [Header("Forest Gen")]
     [Range(0, 100)]
     [SerializeField] private int forestFillPercent;
+    [Range(0, 100)]
+    [SerializeField] private int singleForestTilePercent;
     [SerializeField] private int forestSmoothingMin;
-    [SerializeField] private bool useForestSmoothing;
-    [SerializeField] private bool generateForest;
+    [SerializeField] private int forestSmoothingTimes;
 
     [Header("Mountain Gen")]
     [Range(0, 100)]
     [SerializeField] private int mountainFillPercent;
+    [Range(0, 100)]
+    [SerializeField] private int singleMountainTilePercent;
     [SerializeField] private int mountainSmoothingMin;
-    [SerializeField] private bool useMountainSmoothing;
-    [SerializeField] private bool generateMountain;
+    [SerializeField] private int mountainSmoothingTimes;
 
     [Header("River Gen")]
     [Range(0, 100)]
     [SerializeField] private int riverCurvyness;
     [SerializeField] private int riverStartX;
     [SerializeField] private int maxRiverPathChange;
-    [SerializeField] private bool generateRiver;
+
 
     [Header("Road Gen")]
-    [SerializeField] private bool generateRoad;
     [SerializeField] private int roadHeight;
     [SerializeField] private int roadWidth;
     [SerializeField] private int roadDeviation;
@@ -113,25 +119,46 @@ public class GridManager : MonoBehaviour
     }
 
     private int GetSurroundingTileCount(int gridX, int gridY, Tile tileToCheck) {
+
         int tileCount = 0;
+        if (checkOnlyImmediateNeighbors) {
 
-        for (int nX = gridX-1; nX <= gridX + 1; nX++) {
-            for (int nY = gridY-1; nY <= gridY + 1; nY++) {
-                bool isInBounds = (nX >= 0 && nX<width && nY >= 0 && nY < height);
-                // bool isNotThisTile = (nX != gridX && nY != gridY);
+            List<(int, int)> checkpoints = new List<(int, int)>();
+            checkpoints.Add((gridX, gridY+1));
+            checkpoints.Add((gridX-1, gridY));
+            checkpoints.Add((gridX+1, gridY));
+            checkpoints.Add((gridX, gridY-1));
 
-                if (isInBounds) { //} && isNotThisTile) {
-                    if (tileGrid[nX,nY] == tileToCheck)
-                        tileCount++;
+            foreach ((int, int) checkPoint in checkpoints) {
+                int nX = checkPoint.Item1;
+                int nY = checkPoint.Item2;
+                if (nX >= 0 && nX<width && nY >= 0 && nY < height && tileGrid[nX,nY] == tileToCheck) {
+                    tileCount++;
+                }
+            }
+        } else {
+
+            for (int nX = gridX-1; nX <= gridX + 1; nX++) {
+                for (int nY = gridY-1; nY <= gridY + 1; nY++) {
+                    bool isInBounds = (nX >= 0 && nX<width && nY >= 0 && nY < height);
+                    bool isNotThisTile = (nX != gridX && nY != gridY);
+
+                    if (isInBounds && isNotThisTile) {
+                        if (tileGrid[nX,nY] == tileToCheck)
+                            tileCount++;
+                    }
                 }
             }
         }
         return tileCount;
     }
 
-    private void SmoothTiles(Tile tileToSet, bool noStandAloneTiles, int smoothMin = 0)
+    private void SmoothTiles(Tile tileToSet, System.Random pseudoRandom, int singleTilePercent, int smoothMin = 0)
     {
-        smoothMin = smoothMin == 0 ? smoothingMinThreshold : smoothMin;
+
+        List<(int, int)> tilesToSmooth = new List<(int, int)>();
+        List<(int, int)> tilesToRemove = new List<(int, int)>();
+
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (tileGrid[x,y] != blankTile)
@@ -139,12 +166,20 @@ public class GridManager : MonoBehaviour
                     int surroundingTileCount = GetSurroundingTileCount(x, y, tileToSet);
 
                     if (surroundingTileCount >= smoothMin) {
-                        tileGrid[x,y] = tileToSet;
-                    } else if (tileGrid[x,y] == tileToSet && surroundingTileCount == 1 && noStandAloneTiles == true) {
-                        tileGrid[x,y] = tilePrefabs[(int)Tile.TileType.Grassland];
+                        tilesToSmooth.Add((x,y));
+                    } else if (tileGrid[x,y] == tileToSet && surroundingTileCount == 0) {
+                        if (pseudoRandom.Next(0, 100) > singleTilePercent)
+                            tilesToRemove.Add((x,y));
                     }
                 }
             }
+        }
+
+        foreach ((int, int) i in tilesToSmooth) {
+            tileGrid[i.Item1, i.Item2] = tileToSet;
+        }
+        foreach ((int, int) i in tilesToRemove) {
+            tileGrid[i.Item1, i.Item2] = tilePrefabs[(int)Tile.TileType.Grassland];
         }
     }
 
@@ -157,13 +192,13 @@ public class GridManager : MonoBehaviour
         tileGrid = new Tile[width, height];
 
         // Generate Grassland base map
-        GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Grassland], 100, false);
+        GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Grassland], 100, 0, 100);
 
         if (generateForest)
-            GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Forest], forestFillPercent, useForestSmoothing, false, forestSmoothingMin);
+            GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Forest], forestFillPercent, forestSmoothingTimes, singleForestTilePercent, forestSmoothingMin);
 
         if (generateMountain)
-            GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Mountain], mountainFillPercent, useMountainSmoothing, true, mountainSmoothingMin);
+            GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Mountain], mountainFillPercent, mountainSmoothingTimes, singleMountainTilePercent, mountainSmoothingMin);
 
         if (generateRiver)
             GenerateRiver(pseudoRandom, tilePrefabs[(int)Tile.TileType.Water]);
@@ -172,7 +207,7 @@ public class GridManager : MonoBehaviour
             GenerateRoads(pseudoRandom, tilePrefabs[(int)Tile.TileType.Road]);
     }
 
-    private void GenerateTerrain(System.Random pseudoRandom, Tile tileToPlace, float fillPercent, bool applySmoothing, bool noStandAloneTiles=false, int smoothingMin = 0)
+    private void GenerateTerrain(System.Random pseudoRandom, Tile tileToPlace, float fillPercent, int applySmoothingTimes, int singleTilePercent, int smoothingMin = 0)
     {
         // Populate grid with mountain tiles
         for (int x = 0; x < width; x++) {
@@ -182,9 +217,10 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // Apply smoothing if desired
-        if (applySmoothing)
-            SmoothTiles(tileToPlace, noStandAloneTiles, smoothingMin);
+        // Apply smoothing i times
+        for (int i = 0; i < applySmoothingTimes; i++) {
+            SmoothTiles(tileToPlace, pseudoRandom, singleTilePercent, smoothingMin);
+        }
     }
 
     private void GenerateRiver(System.Random pseudoRandom, Tile waterTile)
@@ -317,7 +353,7 @@ public class GridManager : MonoBehaviour
     }
 
 
-    private void GenerateRoadsCircle(System.Random pseudoRandom, Tile roadTile)
+    private void GenerateTilesCircle(System.Random pseudoRandom, Tile tileToSet)
     {
         int diameter = (int)Mathf.Floor(height * 0.65f);
         int radius = diameter /2;
@@ -328,24 +364,22 @@ public class GridManager : MonoBehaviour
         {
             for (int y = centerY - radius ; y <= centerY; y++)
             {
-                bool isOutlineOuter = ((x - centerX)*(x - centerX) + (y - centerY)*(y - centerY) > radius*radius-radius-radius/2);
                 bool isOutlineInner = ((x - centerX)*(x - centerX) + (y - centerY)*(y - centerY) < radius*radius+radius+radius/2);
+                // bool isOutlineOuter = ((x - centerX)*(x - centerX) + (y - centerY)*(y - centerY) > radius*radius-radius-radius/2);
 
-                if (isOutlineOuter && isOutlineInner)
+                if (isOutlineInner)
                 {
                     // Get values reflected on the x/y axis
                     var xRef = centerX + Mathf.Abs(centerX-x);
                     var yRef = centerY + Mathf.Abs(centerY-y);
 
-                    tileGrid[x,y] = roadTile;
-                    tileGrid[xRef,y] = roadTile;
-                    tileGrid[x,yRef] = roadTile;
-                    tileGrid[xRef,yRef] = roadTile;
+                    tileGrid[x,y] = tileToSet;
+                    tileGrid[xRef,y] = tileToSet;
+                    tileGrid[x,yRef] = tileToSet;
+                    tileGrid[xRef,yRef] = tileToSet;
                 }
             }
         }
-        SmoothTiles(roadTile, false, 6);
-        SmoothTiles(roadTile, false, 5);
 
     }
 
