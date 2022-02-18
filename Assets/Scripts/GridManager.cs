@@ -8,7 +8,7 @@ using TMPro;
 public class GridManager : MonoBehaviour
 {
     [Header("Camera")]
-    [SerializeField] Transform cam;
+    [SerializeField] Camera cam;
 
     [Header("Tile Details")]
     [SerializeField] private Tile blankTile;
@@ -53,9 +53,11 @@ public class GridManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI selectedItemText;
+    [SerializeField] private float zoomFactor;
 
     private void Start()
     {
+        zoomFactor = cam.orthographicSize;
         GenerateGrid();
         RenderMap();
     }
@@ -76,6 +78,14 @@ public class GridManager : MonoBehaviour
                     selectedItemText.text = $"{selectedTile.GetTileTypeVerbose()} - {selectedTile.gridPos}";
                 }
             }
+        if (Input.GetAxis("Mouse ScrollWheel") > 0) {
+            zoomFactor = Mathf.Clamp(zoomFactor-=2, 5, 55);
+            cam.orthographicSize = zoomFactor;
+        } else if (Input.GetAxis("Mouse ScrollWheel") < 0) {
+            zoomFactor = Mathf.Clamp(zoomFactor+=2, 5, 55);
+            cam.orthographicSize = zoomFactor;
+        }
+
     }
 
     private Tile GetTileAtPosition(Vector3 mousePos) {

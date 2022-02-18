@@ -359,7 +359,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a160d838ff8b4b4693ac20007e008c7, type: 3}
   m_Name: 
@@ -612,7 +612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ae98be7281c364abb7a385a26df240, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 519420032}
+  cam: {fileID: 519420031}
   blankTile: {fileID: 493311629806672240, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
   tilePrefabs:
   - {fileID: 493311629806672240, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
@@ -645,6 +645,7 @@ MonoBehaviour:
   roadDeviation: 2
   maxRoadLegLength: 200
   selectedItemText: {fileID: 805437981}
+  zoomFactor: 0
 --- !u!4 &838889526
 Transform:
   m_ObjectHideFlags: 0
@@ -5524,8 +5525,8 @@ SpriteRenderer:
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 2
-  m_Size: {x: 60, y: 45}
+  m_DrawMode: 0
+  m_Size: {x: 640.255, y: 319.22058}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -5539,8 +5540,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198903770}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20, y: 15, z: 1.1709002}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1.1709002}
+  m_LocalScale: {x: 2400, y: 1600, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
