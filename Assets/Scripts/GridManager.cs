@@ -227,7 +227,7 @@ public class GridManager : MonoBehaviour
     {
         int x = Mathf.Clamp(riverStartX, 0, width-1);
         tileGrid[x, 0] = waterTile;
-
+        groundTileMap.SetTile(new Vector3Int(x, -1, 0), waterTile.ruleTile);
         for (int y = 1; y < height-1; y++) {
 
             for (int i = 0; i < maxRiverPathChange; i++) {
@@ -247,6 +247,7 @@ public class GridManager : MonoBehaviour
                 }
             }
         tileGrid[x, height-1] = waterTile;
+        groundTileMap.SetTile(new Vector3Int(x, height, 0), waterTile.ruleTile);
     }
 
     private void GenerateRoads(System.Random pseudoRandom, Tile roadTile)
