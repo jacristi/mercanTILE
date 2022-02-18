@@ -7,6 +7,8 @@ using TMPro;
 
 public class GridManager : MonoBehaviour
 {
+    [Header("Camera")]
+    [SerializeField] Transform cam;
 
     [Header("Tile Details")]
     [SerializeField] private Tile blankTile;
@@ -24,12 +26,14 @@ public class GridManager : MonoBehaviour
     [Header("Forest Gen")]
     [Range(0, 100)]
     [SerializeField] private int forestFillPercent;
+    [SerializeField] private int forestSmoothingMin;
     [SerializeField] private bool useForestSmoothing;
     [SerializeField] private bool generateForest;
 
     [Header("Mountain Gen")]
     [Range(0, 100)]
     [SerializeField] private int mountainFillPercent;
+    [SerializeField] private int mountainSmoothingMin;
     [SerializeField] private bool useMountainSmoothing;
     [SerializeField] private bool generateMountain;
 
@@ -46,8 +50,6 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int roadWidth;
     [SerializeField] private int roadDeviation;
     [SerializeField] private int maxRoadLegLength;
-
-    [SerializeField] Transform cam;
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI selectedItemText;
@@ -148,10 +150,10 @@ public class GridManager : MonoBehaviour
         GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Grassland], 100, false);
 
         if (generateForest)
-            GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Forest], forestFillPercent, useForestSmoothing, false);
+            GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Forest], forestFillPercent, useForestSmoothing, false, forestSmoothingMin);
 
         if (generateMountain)
-            GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Mountain], mountainFillPercent, useMountainSmoothing, true);
+            GenerateTerrain(pseudoRandom, tilePrefabs[(int)Tile.TileType.Mountain], mountainFillPercent, useMountainSmoothing, true, mountainSmoothingMin);
 
         if (generateRiver)
             GenerateRiver(pseudoRandom, tilePrefabs[(int)Tile.TileType.Water]);
@@ -160,7 +162,7 @@ public class GridManager : MonoBehaviour
             GenerateRoads(pseudoRandom, tilePrefabs[(int)Tile.TileType.Road]);
     }
 
-    private void GenerateTerrain(System.Random pseudoRandom, Tile tileToPlace, float fillPercent, bool applySmoothing, bool noStandAloneTiles=false)
+    private void GenerateTerrain(System.Random pseudoRandom, Tile tileToPlace, float fillPercent, bool applySmoothing, bool noStandAloneTiles=false, int smoothingMin = 0)
     {
         // Populate grid with mountain tiles
         for (int x = 0; x < width; x++) {
@@ -172,7 +174,7 @@ public class GridManager : MonoBehaviour
 
         // Apply smoothing if desired
         if (applySmoothing)
-            SmoothTiles(tileToPlace, noStandAloneTiles);
+            SmoothTiles(tileToPlace, noStandAloneTiles, smoothingMin);
     }
 
     private void GenerateRiver(System.Random pseudoRandom, Tile waterTile)
@@ -207,11 +209,11 @@ public class GridManager : MonoBehaviour
         int centerY = height/2;
         int radius = Mathf.Clamp(roadWidth, 2, width - centerX - 4);
 
-        int leftX = centerX - radius + Random.Range(-2, 2);
-        int rightX = centerX + radius + Random.Range(-2, 2);
+        int leftX = Mathf.Min(centerX - radius + Random.Range(-2, 2), centerX-2);
+        int rightX = Mathf.Max(centerX + radius + Random.Range(-2, 2), centerX+2);
 
-        int maxRoadHeight = Mathf.Clamp(roadHeight, 1, height - (centerY + roadDeviation + 2));
         int maxRoadDeviation = Mathf.Clamp(roadDeviation, 0, height/2 - 3);
+        int maxRoadHeight = Mathf.Clamp(roadHeight, 1, height - (centerY + maxRoadDeviation + 2));
 
         GenerateRoadTopLeg(pseudoRandom, roadTile, leftX, rightX, centerY, maxRoadHeight, maxRoadDeviation);
         GenerateRoadBottomLeg(pseudoRandom, roadTile, leftX, rightX, centerY, maxRoadHeight, maxRoadDeviation);

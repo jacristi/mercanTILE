@@ -612,6 +612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ae98be7281c364abb7a385a26df240, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 519420032}
   blankTile: {fileID: 493311629806672240, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
   tilePrefabs:
   - {fileID: 493311629806672240, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
@@ -627,9 +628,11 @@ MonoBehaviour:
   height: 20
   smoothingMinThreshold: 4
   forestFillPercent: 25
+  forestSmoothingMin: 0
   useForestSmoothing: 1
   generateForest: 1
   mountainFillPercent: 15
+  mountainSmoothingMin: 0
   useMountainSmoothing: 1
   generateMountain: 1
   riverCurvyness: 75
@@ -637,7 +640,10 @@ MonoBehaviour:
   maxRiverPathChange: 2
   generateRiver: 1
   generateRoad: 1
-  cam: {fileID: 519420032}
+  roadHeight: 3
+  roadWidth: 5
+  roadDeviation: 2
+  maxRoadLegLength: 200
   selectedItemText: {fileID: 805437981}
 --- !u!4 &838889526
 Transform:
