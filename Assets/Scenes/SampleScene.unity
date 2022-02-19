@@ -623,14 +623,13 @@ MonoBehaviour:
   - {fileID: 1109395757502345242, guid: 280910d0da849d84589c38091cbb3c76, type: 3}
   groundTileMap: {fileID: 2132264863}
   seed: 0
-  useDynamicSeed: 0
+  useDynamicSeed: 1
   width: 35
   height: 20
   generateForest: 1
   generateMountain: 1
   generateRiver: 1
   generateRoad: 1
-  smoothingMinThreshold: 4
   checkOnlyImmediateNeighbors: 1
   forestFillPercent: 25
   singleForestTilePercent: 50
@@ -641,7 +640,7 @@ MonoBehaviour:
   mountainSmoothingMin: 2
   mountainSmoothingTimes: 2
   riverCurvyness: 75
-  riverStartX: 7
+  riverStartX: 4
   maxRiverPathChange: 2
   roadHeight: 3
   roadWidth: 5
