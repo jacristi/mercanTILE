@@ -17,14 +17,4 @@ public class testing : MonoBehaviour
     {
         zoneGrid = new ZoneGrid<int>(width, height, cellSize);
     }
-
-    private void Update() {
-        if (Input.GetMouseButtonDown(0)) {
-            int value = zoneGrid.GetValue(MouseExtensions.GetMouseWorldPosition());
-            zoneGrid.SetValue(MouseExtensions.GetMouseWorldPosition(), value+5);
-        }
-        if (Input.GetMouseButtonDown(1)) {
-            Debug.Log(zoneGrid.GetValue(MouseExtensions.GetMouseWorldPosition()));
-        }
-    }
 }

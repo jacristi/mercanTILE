@@ -17,15 +17,15 @@ PrefabInstance:
       objectReference: {fileID: 2116541512, guid: ba74b4b161faed64fae780988f5eaa20, type: 3}
     - target: {fileID: 3350546840210601744, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
       propertyPath: m_Color.b
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3350546840210601744, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
       propertyPath: m_Color.g
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3350546840210601744, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
       propertyPath: m_Color.r
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3350546840210601744, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}
       propertyPath: m_Enabled
@@ -114,7 +114,6 @@ MonoBehaviour:
   selection: {fileID: 2976184423846253209}
   tileType: 2
   ruleTile: {fileID: 11400000, guid: 9e600da4917cbf04689ca82edc314f0c, type: 2}
-  gridPos: {x: 0, y: 0}
 --- !u!212 &7949168944518012840 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 3350546840210601744, guid: 7f58d1ab95c26824bbac116cc896866d, type: 3}

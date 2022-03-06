@@ -21,6 +21,7 @@ public class Tile : MonoBehaviour
 
     private void Start() {
         tileTypeVerbose = GetTileTypeVerbose();
+        // spr.enabled = true;
     }
 
     public string GetTileTypeVerbose() {
@@ -62,6 +63,7 @@ public class Tile : MonoBehaviour
 
     public void Select() {
         selection.SetActive(true);
+        // spr.enabled = false;
     }
     public void Deselect() {
         selection.SetActive(false);

@@ -642,7 +642,7 @@ MonoBehaviour:
   riverCurvyness: 75
   riverStartX: 4
   maxRiverPathChange: 2
-  riverThickness: 0
+  riverThickness: 1
   roadHeight: 3
   roadWidth: 5
   roadDeviation: 2
