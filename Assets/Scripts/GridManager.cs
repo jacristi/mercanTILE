@@ -282,8 +282,8 @@ public class GridManager : MonoBehaviour
         int targetX = rightX;
         int targetY = centerY+maxRoadHeight;
 
-        int x = Mathf.Clamp(leftX, 1, width-1);
-        int y = Mathf.Clamp(targetY, 1, height-1);
+        int x = Mathf.Clamp(leftX, 1, width-2);
+        int y = Mathf.Clamp(targetY, 1, height-2);
 
         tileGrid[x, y] = roadTile;
 
@@ -306,8 +306,8 @@ public class GridManager : MonoBehaviour
                 x++;
             }
 
-            x = Mathf.Clamp(x, 0, width-1);
-            y = Mathf.Clamp(y, 0, height-1);
+            x = Mathf.Clamp(x, 1, width-2);
+            y = Mathf.Clamp(y, 1, height-2);
 
             tileGrid[x, y] = roadTile;
 
@@ -322,8 +322,8 @@ public class GridManager : MonoBehaviour
         int targetX = leftX;
         int targetY = centerY-maxRoadHeight;
 
-        int x = Mathf.Clamp(rightX, 1, width-1);
-        int y = Mathf.Clamp(targetY, 1, height-1);
+        int x = Mathf.Clamp(rightX, 1, width-2);
+        int y = Mathf.Clamp(targetY, 1, height-2);
 
         tileGrid[x, y] = roadTile;
 
@@ -346,8 +346,8 @@ public class GridManager : MonoBehaviour
                 x--;
             }
 
-            x = Mathf.Clamp(x, 0, width-1);
-            y = Mathf.Clamp(y, 0, height-1);
+            x = Mathf.Clamp(x, 1, width-2);
+            y = Mathf.Clamp(y, 1, height-2);
 
             tileGrid[x, y] = roadTile;
 
@@ -417,15 +417,15 @@ public class GridManager : MonoBehaviour
         int targetX = leftX;
         int targetY = topY;
 
-        int x = Mathf.Clamp(targetX, 1, width-1);
-        int y = Mathf.Clamp(bottomY, 1, height-1);
+        int x = Mathf.Clamp(targetX, 1, width-2);
+        int y = Mathf.Clamp(bottomY, 1, height-2);
 
         tileGrid[x, y] = roadTile;
 
         for (int i=0; i < maxRoadLegLength; i++)
         {
             var pickChance = pseudoRandom.Next(0, 100);
-
+            Debug.Log($"X: {x}, Y: {y}");
             bool xNotPastMaxDev = (x > targetX-maxRoadDeviation);
             bool noAdjRoadsToLeft = (tileGrid[x-1, y-1] != roadTile && tileGrid[x-1, y+1] != roadTile && tileGrid[x-1, y] != roadTile);
             bool targetNot1SpaceAbove = (y+1 != targetY);
@@ -451,8 +451,8 @@ public class GridManager : MonoBehaviour
                 y++;
             }
 
-            x = Mathf.Clamp(x, 0, width-1);
-            y = Mathf.Clamp(y, 0, height-1);
+            x = Mathf.Clamp(x, 1, width-2);
+            y = Mathf.Clamp(y, 1, height-2);
 
             tileGrid[x, y] = roadTile;
 
@@ -467,8 +467,8 @@ public class GridManager : MonoBehaviour
         int targetX = rightX;
         int targetY = bottomY;
 
-        int x = Mathf.Clamp(targetX, 1, width-1);
-        int y = Mathf.Clamp(topY, 1, height-1);
+        int x = Mathf.Clamp(targetX, 1, width-2);
+        int y = Mathf.Clamp(topY, 1, height-2);
 
         tileGrid[x, y] = roadTile;
 
@@ -501,8 +501,8 @@ public class GridManager : MonoBehaviour
                 y--;
             }
 
-            x = Mathf.Clamp(x, 0, width-1);
-            y = Mathf.Clamp(y, 0, height-1);
+            x = Mathf.Clamp(x, 1, width-2);
+            y = Mathf.Clamp(y, 1, height-2);
 
             tileGrid[x, y] = roadTile;
 
