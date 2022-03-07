@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,6 +64,14 @@ public class CameraController : MonoBehaviour
         HandleKeyboardScrolling();
         HandleEdgeScrolling();
         HandleZoom();
+
+        if (Keyboard.current.f12Key.wasPressedThisFrame)
+        {
+            var now = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            var filename = $"ScreenShot-{now}.png";
+            ScreenCapture.CaptureScreenshot(filename);
+            Debug.LogError($"Took screenshot: {filename}");
+        }
     }
 
     private void LateUpdate()
@@ -211,6 +220,7 @@ public class CameraController : MonoBehaviour
     public void SetMaxZoomFactor(float val)
     {
         maxZoomFactor = val;
+        zoomFactor = Mathf.Clamp(zoomFactor, minZoomFactor, maxZoomFactor);
     }
 }
 
