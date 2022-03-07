@@ -63,16 +63,15 @@ public class GridManager : MonoBehaviour
 
     private void Start()
     {
-        zoomFactor = cam.orthographicSize;
-        GenerateGrid();
-        RenderMap();
+        // zoomFactor = cam.orthographicSize;
+        // GenerateGrid();
+        // RenderMap();
     }
 
     private void Update() {
 
-
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-            ReloadGrid();
+        // if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        //     ReloadGrid();
         if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 if (selectedTile != null)
@@ -84,6 +83,8 @@ public class GridManager : MonoBehaviour
                 {
                     selectedTile.Select();
                     selectedItemText.text = $"{selectedTile.GetTileTypeVerbose()} - {selectedTile.gridPos}";
+                } else {
+                    selectedItemText.text = "";
                 }
             }
 
@@ -97,6 +98,14 @@ public class GridManager : MonoBehaviour
             return tileGrid[x,y];
 
         return null;
+    }
+
+    public void NewGrid(int newWidth, int newHeight, int forestAmount) {
+        width = newWidth;
+        height = newHeight;
+        forestFillPercent = forestAmount;
+        Debug.Log($"W: {width}, H: {height}");
+        ReloadGrid();
     }
 
     public void ReloadGrid()
@@ -405,7 +414,7 @@ public class GridManager : MonoBehaviour
                 groundTileMap.SetTile(new Vector3Int(x, y, 0), thisTile.ruleTile);
             }
         }
-        cam.transform.position = new Vector3((float)width * 0.65f, (float)height * 0.5f, -10);
+        cam.transform.position = new Vector3((float)width * 0.5f, (float)height * 0.5f, -10);
         cam.GetComponent<CameraController>().mapSize = new (width, height);
     }
 
