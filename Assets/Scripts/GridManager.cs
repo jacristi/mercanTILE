@@ -100,11 +100,16 @@ public class GridManager : MonoBehaviour
         return null;
     }
 
-    public void NewGrid(int newWidth, int newHeight, int forestAmount) {
+    public void NewGrid(int newWidth, int newHeight, int forestAmount, int mountainAmountPercent, int riverX) {
         width = newWidth;
         height = newHeight;
         forestFillPercent = forestAmount;
-        Debug.Log($"W: {width}, H: {height}");
+        mountainFillPercent = mountainAmountPercent;
+        if (riverX == -1)
+            generateRiver = false;
+        else
+            generateRiver = true;
+        riverStartX = riverX;
         ReloadGrid();
     }
 
