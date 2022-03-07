@@ -61,18 +61,12 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI selectedItemText;
     [SerializeField] private float zoomFactor;
 
-    private void Start()
+    private void Start() {}
+
+
+    private void Update()
     {
-        // zoomFactor = cam.orthographicSize;
-        // GenerateGrid();
-        // RenderMap();
-    }
-
-    private void Update() {
-
-        // if (Keyboard.current.spaceKey.wasPressedThisFrame)
-        //     ReloadGrid();
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        if (Mouse.current.leftButton.wasPressedThisFrame && !Mouse.current.IsPointerOverUI())
             {
                 if (selectedTile != null)
                     selectedTile.Deselect();
@@ -87,7 +81,6 @@ public class GridManager : MonoBehaviour
                     selectedItemText.text = "";
                 }
             }
-
     }
 
     private Tile GetTileAtPosition(Vector3 mousePos) {

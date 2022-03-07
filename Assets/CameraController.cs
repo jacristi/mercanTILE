@@ -167,7 +167,7 @@ public class CameraController : MonoBehaviour
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
             if (Mouse.current.IsPointerOverUI())
-                {Debug.Log("OVER UI");return;}
+                return;
 
             isDragging = true;
             dragOrigin = Mouse.current.GetWorldPosition(cam);
