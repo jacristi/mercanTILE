@@ -100,7 +100,7 @@ public class GridManager : MonoBehaviour
         return null;
     }
 
-    public void NewGrid(int newWidth, int newHeight, int forestAmount, int mountainAmountPercent, int riverX) {
+    public void NewGrid(int newWidth, int newHeight, int forestAmount, int mountainAmountPercent, int riverX, int roadW, int roadH, int roadDev) {
         width = newWidth;
         height = newHeight;
         forestFillPercent = forestAmount;
@@ -110,6 +110,13 @@ public class GridManager : MonoBehaviour
         else
             generateRiver = true;
         riverStartX = riverX;
+        roadWidth = roadW;
+        roadHeight = roadH;
+        if (roadW == -1 || roadH == -1)
+            generateRoad = false;
+        else
+            generateRoad = true;
+        roadDeviation = roadDev;
         ReloadGrid();
     }
 

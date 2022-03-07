@@ -22,18 +22,31 @@ public class GridGenerationUIController : MonoBehaviour
     private int mountainAmountPercent;
 
     public TMP_Dropdown riverStartDropdown;
-    public int riverStart = 2;
-    public int riverStartX;
+    public int riverStartVal = 2;
+    private int riverStartX;
+
+    public TMP_Dropdown roadSizeDropdown;
+    public int roadSizeVal = 2;
+    private int roadWidth;
+    private int roadHeight;
+
+    public TMP_Dropdown roadDeviationDropdown;
+    public int roadDeviationVal = 1;
+    private int roadDeviation;
 
     private void Start() {
         mapSizeDropdown.value = mapSize;
         forestAmountDropdown.value = forestAmount;
         mountainAmountDropdown.value = mountainAmount;
-        riverStartDropdown.value = riverStart;
+        riverStartDropdown.value = riverStartVal;
+        roadSizeDropdown.value = roadSizeVal;
+        roadDeviationDropdown.value = roadDeviationVal;
         SetMapSize(1);
         SetForestAmount(1);
         SetMountainAmount(1);
         SetRiverStart(1);
+        SetRoadSize(1);
+        SetRoadDeviation(1);
         MakeGrid();
     }
 
@@ -127,29 +140,97 @@ public class GridGenerationUIController : MonoBehaviour
     }
 
     public void SetRiverStart(int value) {
-        riverStart = riverStartDropdown.value;
+        riverStartVal = riverStartDropdown.value;
         int mid = mapWidth/2;
         int qrt = mapWidth/4;
         int mult = mapSize + 1;
-        switch (riverStart)
+        switch (riverStartVal)
         {
             case 0:
                 riverStartX = -1;
                 break;
             case 1:
-                riverStartX = Random.Range(0, 4*mult);
+                riverStartX = Random.Range(0, 2*mult);
                 break;
             case 2:
-                riverStartX = Random.Range(mid-(qrt-qrt+4*mult), mid-(qrt+qrt-4*mult));
+                riverStartX = Random.Range(mid-(qrt-qrt+(4*mult)), mid-(qrt+qrt-(4*mult)));
                 break;
             case 3:
                 riverStartX = Random.Range(mid-4, mid+4);
                 break;
             case 4:
-                riverStartX = Random.Range(mid+(qrt-qrt+4*mult), mid+(qrt+qrt-4*mult));
+                riverStartX = Random.Range(mid+(qrt-qrt+(4*mult)), mid+(qrt+qrt-(4*mult)));
                 break;
             default:
-                riverStartX = Random.Range(mapWidth-4*mult, mapWidth);
+                riverStartX = Random.Range(mapWidth-(2*mult), mapWidth);
+                break;
+        }
+    }
+
+    public void SetRoadSize(int value) {
+        roadSizeVal = roadSizeDropdown.value;
+
+        switch (roadSizeVal)
+        {
+            case 0:
+                roadWidth = -1;
+                roadHeight = -1;
+                break;
+            case 1:
+                roadWidth = 1;
+                roadHeight = 1;
+                break;
+            case 2:
+                roadWidth = mapWidth/8;
+                roadHeight = mapHeight/8;
+                break;
+            case 3:
+                roadWidth = mapWidth/6;
+                roadHeight = mapHeight/6;
+                break;
+            case 4:
+                roadWidth = mapWidth/4;
+                roadHeight = mapHeight/4;
+                break;
+            case 5:
+                roadWidth = mapWidth/2;
+                roadHeight = mapHeight/2;
+                break;
+            case 6:
+                roadWidth = mapWidth;
+                roadHeight = mapHeight;
+                break;
+            default:
+                roadWidth = mapWidth/6;
+                roadHeight = mapHeight/6;
+                break;
+        }
+    }
+
+    public void SetRoadDeviation(int value) {
+        roadDeviationVal = roadDeviationDropdown.value;
+        switch (roadDeviationVal)
+        {
+            case 0:
+                roadDeviation = 0;
+                break;
+            case 1:
+                roadDeviation = Random.Range(1, 3);
+                break;
+            case 2:
+                roadDeviation = Random.Range(3, 5);
+                break;
+            case 3:
+                roadDeviation = Random.Range(5, 8);
+                break;
+            case 4:
+                roadDeviation = Random.Range(8, 11);
+                break;
+            case 5:
+                roadDeviation = 99;
+                break;
+            default:
+                roadDeviation = Random.Range(1, 3);
                 break;
         }
     }
@@ -160,6 +241,8 @@ public class GridGenerationUIController : MonoBehaviour
         SetForestAmount(1);
         SetMountainAmount(1);
         SetRiverStart(1);
-        gridManager.NewGrid(mapWidth, mapHeight, forestAmountPercent, mountainAmountPercent, riverStartX);
+        SetRoadSize(1);
+        SetRoadDeviation(1);
+        gridManager.NewGrid(mapWidth, mapHeight, forestAmountPercent, mountainAmountPercent, riverStartX, roadWidth, roadHeight, roadDeviation);
     }
 }
