@@ -2,31 +2,42 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public static class MouseExtensions
 {
-        public static Vector3 GetMouseWorldPosition() {
-            Vector3 vec = GetMouseWorldPositionWithZ(Input.mousePosition, Camera.main);
-            vec.z = 0f;
-            return vec;
-        }
+    private static Camera _mainCamera;
 
-        public static Vector3 GetMouseWorldPositionWithZ() {
-            return GetMouseWorldPositionWithZ(Input.mousePosition, Camera.main);
-        }
+    public static Vector3 GetWorldPosition(this Mouse mouse, Camera camera = null)
+    {
+        if (camera == null && _mainCamera == null)
+            _mainCamera = Camera.main;
 
-        public static Vector3 GetMouseWorldPositionWithZ(Camera worldCamera) {
-            return GetMouseWorldPositionWithZ(Input.mousePosition, worldCamera);
-        }
+        var targetCamera = camera != null ? camera : _mainCamera;
 
-        public static Vector3 GetMouseWorldPositionWithZ(Vector3 screenPosition, Camera worldCamera) {
-            Vector3 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
-            return worldPosition;
-        }
+        if (targetCamera == null)
+            throw new InvalidOperationException("No camera was provided and main camera is not available");
 
-        public static Vector3 GetDirToMouse(Vector3 fromPosition) {
-            Vector3 mouseWorldPosition = GetMouseWorldPosition();
-            return (mouseWorldPosition - fromPosition).normalized;
-        }
+        var screenPosition = mouse.position.ReadValue();
+        var worldPosition = targetCamera.ScreenToWorldPoint(screenPosition);
+        worldPosition.z = 0f;
+
+        return worldPosition;
+    }
+
+    public static bool IsPointerOverUI(this Mouse mouse)
+    {
+        if (EventSystem.current == null)
+            return false;
+
+        var pointer = new PointerEventData(EventSystem.current)
+        {
+            position = mouse.position.ReadValue()
+        };
+
+        var raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        return raycastResults.Count > 0;
+    }
 }
-

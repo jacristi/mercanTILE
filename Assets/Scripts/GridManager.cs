@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TMPro;
-
+using UnityEngine.InputSystem;
 
 public class GridManager : MonoBehaviour
 {
@@ -69,14 +69,16 @@ public class GridManager : MonoBehaviour
     }
 
     private void Update() {
-        if (Input.GetKeyDown("space"))
+
+
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
             ReloadGrid();
-        if (Input.GetMouseButtonDown(0))
+        if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 if (selectedTile != null)
                     selectedTile.Deselect();
 
-                selectedTile = GetTileAtPosition(MouseExtensions.GetMouseWorldPosition());
+                selectedTile = GetTileAtPosition(Mouse.current.GetWorldPosition(cam)); // GetWorldPosition
 
                 if (selectedTile != null)
                 {
@@ -84,13 +86,6 @@ public class GridManager : MonoBehaviour
                     selectedItemText.text = $"{selectedTile.GetTileTypeVerbose()} - {selectedTile.gridPos}";
                 }
             }
-        if (Input.GetAxis("Mouse ScrollWheel") > 0) {
-            zoomFactor = Mathf.Clamp(zoomFactor-=2, 5, 55);
-            cam.orthographicSize = zoomFactor;
-        } else if (Input.GetAxis("Mouse ScrollWheel") < 0) {
-            zoomFactor = Mathf.Clamp(zoomFactor+=2, 5, 55);
-            cam.orthographicSize = zoomFactor;
-        }
 
     }
 
@@ -187,6 +182,8 @@ public class GridManager : MonoBehaviour
     {
         if (useDynamicSeed)
             seed = Time.time;
+
+        maxRoadLegLength = (width * height)/4;
 
         System.Random pseudoRandom = new System.Random(seed.GetHashCode());
         tileGrid = new Tile[width, height];
@@ -408,8 +405,8 @@ public class GridManager : MonoBehaviour
                 groundTileMap.SetTile(new Vector3Int(x, y, 0), thisTile.ruleTile);
             }
         }
-
-        cam.transform.position = new Vector3((float)width * 0.5f, (float)height * 0.5f, -10);
+        cam.transform.position = new Vector3((float)width * 0.65f, (float)height * 0.5f, -10);
+        cam.GetComponent<CameraController>().mapSize = new (width, height);
     }
 
     private void GeneratePathDownUp(System.Random pseudoRandom, Tile roadTile, int bottomY, int topY, int leftX, int maxRoadHeight, int maxRoadDeviation)
@@ -425,7 +422,7 @@ public class GridManager : MonoBehaviour
         for (int i=0; i < maxRoadLegLength; i++)
         {
             var pickChance = pseudoRandom.Next(0, 100);
-            Debug.Log($"X: {x}, Y: {y}");
+
             bool xNotPastMaxDev = (x > targetX-maxRoadDeviation);
             bool noAdjRoadsToLeft = (tileGrid[x-1, y-1] != roadTile && tileGrid[x-1, y+1] != roadTile && tileGrid[x-1, y] != roadTile);
             bool targetNot1SpaceAbove = (y+1 != targetY);
