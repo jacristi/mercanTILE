@@ -18,8 +18,6 @@ public class CameraController : MonoBehaviour
     private bool isDragging;
     private Vector3 dragOrigin;
 
-    private bool isZooming = false;
-
     [Header("Target")]
     [SerializeField] private Transform initialTarget;
 
@@ -75,7 +73,6 @@ public class CameraController : MonoBehaviour
 
         newPosition = ClampToBounds(newPosition);
         transform.position = newPosition;
-        isZooming = false;
     }
 
     private Vector3 ClampToBounds(Vector3 position)
@@ -87,14 +84,6 @@ public class CameraController : MonoBehaviour
         var minY = Mathf.FloorToInt(tilesY / 2f) - 1;
         var maxX = (mapSize.x - Mathf.FloorToInt(tilesX / 2f) + 2);
         var maxY = (mapSize.y - Mathf.FloorToInt(tilesY / 2f) + 3);
-
-        if (isZooming) {
-            bool outOfBoundsX = (Mathf.RoundToInt(position.x) < minX || Mathf.RoundToInt(position.x) > maxX);
-            bool outOfBoundsY = (Mathf.RoundToInt(position.y) < minY || Mathf.RoundToInt(position.y) > maxY);
-
-            if (outOfBoundsX || outOfBoundsY)
-                ZoomIn();
-        }
 
         return new Vector3(
             Mathf.Clamp(Mathf.RoundToInt(position.x), minX, maxX),
@@ -205,8 +194,6 @@ public class CameraController : MonoBehaviour
         if (scrollDelta == 0)
             return;
 
-        isZooming = true;
-
         if (Mouse.current.IsPointerOverUI())
             return;
 
@@ -220,5 +207,10 @@ public class CameraController : MonoBehaviour
     private void ZoomIn() => zoomFactor = Mathf.Clamp(zoomFactor - zoomStep, minZoomFactor, maxZoomFactor);
 
     private void ZoomOut() => zoomFactor = Mathf.Clamp(zoomFactor + zoomStep, minZoomFactor, maxZoomFactor);
+
+    public void SetMaxZoomFactor(float val)
+    {
+        maxZoomFactor = val;
+    }
 }
 

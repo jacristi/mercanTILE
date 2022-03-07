@@ -12,6 +12,7 @@ public class GridGenerationUIController : MonoBehaviour
     public int mapSize = 1;
     private int mapWidth;
     private int mapHeight;
+    private float maxZoomOut = 1;
 
     public TMP_Dropdown forestAmountDropdown;
     public int forestAmount = 2;
@@ -33,6 +34,8 @@ public class GridGenerationUIController : MonoBehaviour
     public TMP_Dropdown roadDeviationDropdown;
     public int roadDeviationVal = 1;
     private int roadDeviation;
+
+    public CameraController camController;
 
     private void Start() {
         mapSizeDropdown.value = mapSize;
@@ -57,34 +60,42 @@ public class GridGenerationUIController : MonoBehaviour
             case 0:
                 mapWidth = 24;
                 mapHeight = 18;
+                maxZoomOut = 1f;
                 break;
             case 1:
                 mapWidth = 32;
                 mapHeight = 24;
+                maxZoomOut = 1.25f;
                 break;
             case 2:
                 mapWidth = 48;
                 mapHeight = 36;
+                maxZoomOut = 1.5f;
                 break;
             case 3:
                 mapWidth = 60;
                 mapHeight = 45;
+                maxZoomOut = 2f;
                 break;
             case 4:
                 mapWidth = 72;
                 mapHeight = 54;
+                maxZoomOut = 2.25f;
                 break;
             case 5:
                 mapWidth = 100;
                 mapHeight = 75;
+                maxZoomOut = 2.5f;
                 break;
             case 6:
                 mapWidth = 200;
                 mapHeight = 150;
+                maxZoomOut = 3f;
                 break;
             default:
                 mapWidth = 48;
                 mapHeight = 36;
+                maxZoomOut = 1.5f;
                 break;
         }
     }
@@ -243,6 +254,7 @@ public class GridGenerationUIController : MonoBehaviour
         SetRiverStart(1);
         SetRoadSize(1);
         SetRoadDeviation(1);
+        camController.SetMaxZoomFactor(maxZoomOut);
         gridManager.NewGrid(mapWidth, mapHeight, forestAmountPercent, mountainAmountPercent, riverStartX, roadWidth, roadHeight, roadDeviation);
     }
 }
