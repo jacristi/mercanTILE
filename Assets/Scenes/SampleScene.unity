@@ -7402,6 +7402,14 @@ PrefabInstance:
       propertyPath: m_text
       value: Create!
       objectReference: {fileID: 0}
+    - target: {fileID: 95200368995869208, guid: 673e30b94eb40694e822cbd182d45cf9, type: 3}
+      propertyPath: m_fontSize
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 95200368995869208, guid: 673e30b94eb40694e822cbd182d45cf9, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 32
+      objectReference: {fileID: 0}
     - target: {fileID: 942228198713054022, guid: 673e30b94eb40694e822cbd182d45cf9, type: 3}
       propertyPath: m_Name
       value: ButtonCreate
